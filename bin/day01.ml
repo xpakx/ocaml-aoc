@@ -22,8 +22,18 @@ let rec solve input = match input with
         | a :: ((b :: _) as list) when a < b -> 1 + solve list
         | _ :: tail -> solve tail
 
+let rec solve_second input = match input with
+        | [] -> 0 
+        | a :: ((b :: c :: d :: _) as list) when a+b+c < b+c+d -> 1 + solve_second list
+        | _ :: tail -> solve_second tail
+
 let () = print_endline "Advent of Code, day 1"
 let () = read_file "inputs/input01.txt"
         |> parse
         |> solve
         |> Printf.printf "*  %d\n"
+
+let () = read_file "inputs/input01.txt"
+        |> parse
+        |> solve_second
+        |> Printf.printf "** %d"
