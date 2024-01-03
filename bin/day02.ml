@@ -39,3 +39,19 @@ let () = read_file "inputs/input02.txt"
         |> parse
         |> solve
         |> Printf.printf "*  %d\n"
+
+let rec calc_second (aim, dist, depth, input) = match input with
+        | [] -> (aim, dist, depth) 
+        | ("down", b) :: list -> calc_second (b+aim, dist, depth, list)
+        | ("up", b) :: list -> calc_second (aim-b, dist, depth, list)
+        | ("forward", b) :: list -> calc_second (aim, dist+b, depth+aim*b, list)
+        | _ :: tail -> calc_second (aim, dist, depth, tail)
+
+let solve_second input = 
+        let (_, depth, dist) = calc_second (0, 0, 0, input) in
+        depth * dist
+
+let () = read_file "inputs/input02.txt"
+        |> parse
+        |> solve_second
+        |> Printf.printf "*  %d\n"
