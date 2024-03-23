@@ -46,16 +46,23 @@ let rec calc_bits input = match input with
         | [] -> [] 
         | x :: tail -> most_common_number x :: calc_bits tail
 
-let solve input = 
-        let lst = transpose input in
-        calc_bits lst
+let rec invert input = match input with
+        | [] -> [] 
+        | 1 :: tail -> 0 :: invert tail
+        | 0 :: tail -> 1 :: invert tail
+        | _ :: _  -> failwith("Wrong bit")
 
-let print_int_list lst =
-        List.iter (fun x -> print_int x; print_string " ") lst;
-        print_newline ()
+let binary_to_int lst =
+        List.fold_left (fun acc bit -> (acc lsl 1) lor bit) 0 lst
+
+let solve input = 
+        let lst = calc_bits (transpose input) in
+        let gamma = binary_to_int lst in
+        let epsilon = binary_to_int (invert lst) in
+        gamma * epsilon
 
 let () = print_endline "Advent of Code, day 3"
 let () = read_file "inputs/input03.txt"
         |> parse
         |> solve
-        |> print_int_list
+        |> Printf.printf "*  %d\n"
