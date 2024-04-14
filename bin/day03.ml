@@ -102,11 +102,19 @@ let rec oxygen_generator(input: (int list * int list) list) : int list =
         | [(a, _)] -> a
         | _ -> oxygen_generator (filter input (calculate_pattern input))
 
+let rec co2_generator(input: (int list * int list) list) : int list = 
+        match input with 
+        | [] -> []
+        | [(a, _)] -> a
+        | _ -> co2_generator (filter input (invert (calculate_pattern input)))
+
 let solve2 input =
         let duplicates = duplicate_list input in
         let result = oxygen_generator duplicates in
         let oxygen = binary_to_int result in
-        oxygen
+        let result2 = co2_generator duplicates in
+        let co2 = binary_to_int result2 in
+        oxygen * co2
 
 let () = read_file "inputs/input03.txt"
         |> parse
