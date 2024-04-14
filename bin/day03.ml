@@ -66,3 +66,49 @@ let () = read_file "inputs/input03.txt"
         |> parse
         |> solve
         |> Printf.printf "*  %d\n"
+
+
+let rec duplicate_list (input: int list list): (int list * int list) list = match input with 
+        | [] -> []
+        | a :: tail -> (a, a) :: duplicate_list tail
+
+let drop_first input = match input with 
+        | [] -> []
+        | _ :: tail -> tail
+
+let rec drop_first_list input = match input with 
+        | [] -> []
+        | (a, b) :: tail -> (a, drop_first b) :: drop_first_list tail 
+
+let first_match (elem: (int list * int list)) (pattern: int list): bool = match (elem, pattern) with
+       | ((_, a :: _), b :: _) -> a = b
+       | _ -> false
+
+let filter(input: (int list * int list) list) (pattern: int list): (int list * int list) list = 
+        let filtered = List.filter (fun x -> first_match x pattern) input in
+        drop_first_list filtered
+
+let rec flatten_list(input: (int list * int list) list) : int list list = match input with
+        | [] -> [] 
+        | (_, a) :: tail -> a :: flatten_list tail
+
+let calculate_pattern(input: (int list * int list) list) : int list =
+        let flat = flatten_list input in
+        calc_bits (transpose flat)
+
+let rec oxygen_generator(input: (int list * int list) list) : int list = 
+        match input with 
+        | [] -> []
+        | [(a, _)] -> a
+        | _ -> oxygen_generator (filter input (calculate_pattern input))
+
+let solve2 input =
+        let duplicates = duplicate_list input in
+        let result = oxygen_generator duplicates in
+        let oxygen = binary_to_int result in
+        oxygen
+
+let () = read_file "inputs/input03.txt"
+        |> parse
+        |> solve2
+        |> Printf.printf "** %d\n"
